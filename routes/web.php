@@ -1,6 +1,8 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Livewire\Posts;
+use App\Http\Livewire\Postshow;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,5 +16,16 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get('/', function () {
+    // auth()->user()->assignRole('admin');
     return view('welcome');
 });
+
+Route::middleware(['auth:sanctum', 'verified'])->get('/dashboard', function () {
+    return view('dashboard');
+})->name('dashboard');
+
+Route::group(['middleware' => ['auth:sanctum', 'role:admin']], function () {
+    route::get('/admin/posts', Posts::class)->name('posts.index');
+});
+
+Route::get('/posts/{slug}', Postshow::class)->name('posts.show');
